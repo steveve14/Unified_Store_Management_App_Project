@@ -127,3 +127,94 @@
 *   [ ] 고객 유치 및 유지 이벤트 기획
 *   [ ] 사용자 데이터 분석 (재구매율, 이탈률 등) 및 서비스 개선안 도출
 *   [ ] 고객센터 운영 정책 수립 및 FAQ 관리
+
+# 음식 배달 및 통합 매장 관리 앱 - 프로젝트 파일 구조
+
+## 1. 프로젝트 최상위 구조 (Monorepo)
+FoodDeliveryProject/
+├── 📂 server/ # 백엔드 서버 (Node.js)
+├── 📂 mobile/ # 안드로이드 앱 프로젝트들
+├── 📂 web/ # 웹 기반 대시보드 프로젝트들 (React)
+├── 📂 docs/ # API 명세, DB 설계 등 프로젝트 문서
+└── 📜 README.md # 프로젝트 전체에 대한 설명
+
+## 2. `server/` - 백엔드 서버 상세 구조
+
+모든 앱(모바일, 웹, 태블릿)과 통신하며 비즈니스 로직, 데이터베이스를 관리합니다.
+server/
+├── 📂 src/
+│ ├── 📂 api/ # API 라우팅 (경로 설정)
+│ │ ├── 📜 order.routes.js # 주문 관련 API (배달, 매장, 포장)
+│ │ ├── 📜 store.routes.js # 가게, 메뉴, 재고 관련 API
+│ │ ├── 📜 user.routes.js # 고객, 사장님, 라이더 회원 관련 API
+│ │ └── 📜 table.routes.js # 매장 테이블, POS 관련 API
+│ │
+│ ├── 📂 config/ # 설정 파일
+│ │ ├── 📜 database.js # DB 연결 설정
+│ │ └── 📜 environment.js # 환경 변수 (API 키 등)
+│ │
+│ ├── 📂 controllers/ # 실제 비즈니스 로직 처리
+│ │ ├── 📜 order.controller.js
+│ │ ├── 📜 stock.controller.js # 재고 관리 로직 (자동/수동 차감)
+│ │ └── 📜 payment.controller.js # 결제 처리 로직
+│ │
+│ ├── 📂 models/ # 데이터베이스 스키마(모델) 정의
+│ │ ├── 📜 User.model.js # 유저 (고객, 사장님, 라이더, 관리자)
+│ │ ├── 📜 Store.model.js # 가게 정보
+│ │ ├── 📜 Menu.model.js # 메뉴 정보
+│ │ ├── 📜 Ingredient.model.js # 식자재 정보
+│ │ ├── 📜 Recipe.model.js # 메뉴-식자재 연결 정보
+│ │ ├── 📜 Order.model.js # 주문 정보
+│ │ └── 📜 Table.model.js # 테이블 정보
+│ │
+│ ├── 📂 services/ # 결제, 알림 등 외부 서비스 연동 로직
+│ │ ├── 📜 notification.service.js # 푸시 알림 (FCM)
+│ │ └── 📜 payment.service.js # 결제 게이트웨이 연동
+│ │
+│ └── 📂 middlewares/ # 요청 중간 처리 (인증 등)
+│ └── 📜 auth.middleware.js # 로그인 인증 처리
+│
+├── 📜 .env # 환경 변수 파일
+├── 📜 app.js # 서버 시작점
+└── 📜 package.json # 프로젝트 정보 및 의존성 관리
+
+## 3. `mobile/` - 안드로이드 앱 상세 구조
+
+각각의 앱은 독립된 안드로이드 스튜디오 프로젝트입니다.
+mobile/
+├── 📂 customer_app/ # 고객용 배달 앱
+├── 📂 rider_app/ # 라이더용 배달 앱
+└── 📂 store_pos_system/ # 매장 내 태블릿 시스템
+├── 📂 customer_tablet_app/ # 고객용 주문 태블릿 앱
+└── 📂 staff_tablet_app/ # 직원용 관리/결제 태블릿 앱
+
+---
+
+## 4. `web/` - 웹 대시보드 상세 구조
+
+사장님과 서비스 관리자를 위한 React 기반 웹 애플리케이션입니다.
+web/
+├── 📂 owner_dashboard/ # 사장님용 대시보드
+│ ├── 📂 src/
+│ │ ├── 📂 components/ # 재사용 가능한 UI 컴포넌트 (버튼, 차트 등)
+│ │ ├── 📂 pages/ # 실제 화면 페이지
+│ │ │ ├── 📜 Dashboard.jsx # 메인 대시보드 (매출 현황)
+│ │ │ ├── 📜 OrderManagement.jsx # 주문 통합 관리
+│ │ │ ├── 📜 MenuManagement.jsx # 메뉴/레시피 관리
+│ │ │ ├── 📜 StockManagement.jsx # 재고 관리
+│ │ │ └── 📜 TableLayout.jsx # 테이블 배치 설정
+│ │ │
+│ │ ├── 📂 services/ # 백엔드 API 통신 함수
+│ │ └── 📂 store/ # 전역 상태 관리 (Redux, Zustand 등)
+│ │
+│ └── 📜 package.json
+│
+└── 📂 admin_dashboard/ # 서비스 관리자용 대시보드
+├── 📂 src/
+│ └── 📂 pages/
+│ ├── 📜 UserManagement.jsx # 모든 유저 관리
+│ ├── 📜 StoreManagement.jsx # 입점 가게 관리
+│ ├── 📜 RiderManagement.jsx # 라이더 관리/승인
+│ └── 📜 SalesAnalytics.jsx # 전체 서비스 통계
+│
+└── 📜 package.json
