@@ -1,157 +1,168 @@
-package com.example.deliveryapp
+package com.example.deliveryapp // 본인의 패키지 이름 확인
 
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
-import com.example.deliveryapp.databinding.ActivityLoginBinding // 생성된 바인딩 클래스를 임포트
+// XML 파일 이름(activity_login)에 따라 자동 생성된 바인딩 클래스를 임포트합니다.
+import com.example.deliveryapp.databinding.ActivityLoginBinding
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayout
 
+// 클래스 이름도 역할에 맞게 LoginActivity로 변경하는 것을 권장합니다.
 class LoginActivity : AppCompatActivity() {
 
-    // 뷰 바인딩을 위한 변수 선언
-    private lateinit var binding: ActivityLoginBinding
+    // 뷰 바인딩 객체와 ViewModel 선언
+    private lateinit var binding: ActivityLoginBinding // ★★★ ActivityLoginBinding으로 수정
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 뷰 바인딩 초기화 및 화면 설정
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        // 뷰 바인딩 객체 초기화 및 화면 설정
+        binding = ActivityLoginBinding.inflate(layoutInflater) // ★★★ ActivityLoginBinding으로 수정
         setContentView(binding.root)
 
         // 기능별 함수 호출
-        setupTabLayout()
-        setupInputValidation()
+        setupTabs()
+        setupValidationListeners()
         setupClickListeners()
-        setupSocialLoginButtons() // 소셜 로그인 버튼 아이콘 설정
+        observeViewModel()
     }
 
-    /**
-     * 탭 레이아웃 설정 (로그인/회원가입 전환)
-     */
-    private fun setupTabLayout() {
-        // 탭 추가
+    private fun setupTabs() {
+        // 모든 뷰는 'binding' 객체를 통해 접근합니다.
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("로그인"))
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("회원가입"))
 
-        // 탭 선택 리스너
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
-                    0 -> { // 로그인 탭
-                        binding.loginLayout.visibility = View.VISIBLE
-                        binding.signupLayout.visibility = View.GONE
-                    }
-                    1 -> { // 회원가입 탭
-                        binding.loginLayout.visibility = View.GONE
-                        binding.signupLayout.visibility = View.VISIBLE
-                    }
-                }
+                val isLoginTab = tab?.position == 0
+                val targetView = if (isLoginTab) binding.loginLayout else binding.signupLayout
+                val otherView = if (isLoginTab) binding.signupLayout else binding.loginLayout
+
+                targetView.visibility = View.VISIBLE
+                targetView.animate().alpha(1f).setDuration(300).start()
+                otherView.animate().alpha(0f).setDuration(300).withEndAction {
+                    otherView.visibility = View.GONE
+                }.start()
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
     }
 
-    /**
-     * 입력 필드 유효성 검사 설정
-     */
-    private fun setupInputValidation() {
-        // --- 로그인 폼 유효성 검사 ---
+    private fun setupValidationListeners() {
         binding.loginEmailInput.doAfterTextChanged { validateLoginForm() }
         binding.loginPasswordInput.doAfterTextChanged { validateLoginForm() }
 
-        // --- 회원가입 폼 유효성 검사 ---
         binding.signupNameInput.doAfterTextChanged { validateSignupForm() }
         binding.signupEmailInput.doAfterTextChanged { validateSignupForm() }
         binding.signupPhoneInput.doAfterTextChanged { validateSignupForm() }
         binding.signupPasswordInput.doAfterTextChanged { validateSignupForm() }
         binding.signupConfirmPasswordInput.doAfterTextChanged { validateSignupForm() }
+
         binding.termsCheckbox.setOnCheckedChangeListener { _, _ -> validateSignupForm() }
     }
 
-    /**
-     * 로그인 폼의 입력값을 확인하고 버튼 상태를 업데이트
-     */
     private fun validateLoginForm() {
-        val email = binding.loginEmailInput.text.toString()
-        val password = binding.loginPasswordInput.text.toString()
-        val isEnabled = email.isNotBlank() && password.isNotBlank()
-        updateButtonState(binding.loginButton, isEnabled)
+        val email = binding.loginEmailInput.text.toString().trim()
+        val password = binding.loginPasswordInput.text.toString().trim()
+        val isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        val isPasswordValid = password.isNotEmpty()
+        updateButtonState(binding.loginButton, isEmailValid && isPasswordValid)
     }
 
-    /**
-     * 회원가입 폼의 입력값을 확인하고 버튼 상태를 업데이트
-     */
     private fun validateSignupForm() {
-        val name = binding.signupNameInput.text.toString()
-        val email = binding.signupEmailInput.text.toString()
-        val phone = binding.signupPhoneInput.text.toString()
-        val password = binding.signupPasswordInput.text.toString()
-        val confirmPassword = binding.signupConfirmPasswordInput.text.toString()
-        val termsChecked = binding.termsCheckbox.isChecked
+        val password = binding.signupPasswordInput.text.toString().trim()
+        val confirmPassword = binding.signupConfirmPasswordInput.text.toString().trim()
 
-        // 비밀번호 일치 여부 확인 및 에러 메시지 설정
-        if (password.isNotBlank() && confirmPassword.isNotBlank() && password != confirmPassword) {
+        if (confirmPassword.isNotEmpty() && password != confirmPassword) {
             binding.confirmPasswordLayout.error = "비밀번호가 일치하지 않습니다."
         } else {
-            binding.confirmPasswordLayout.error = null // 일치하면 에러 메시지 제거
+            binding.confirmPasswordLayout.error = null
         }
 
-        val isEnabled = name.isNotBlank() && email.isNotBlank() && phone.isNotBlank() &&
-                password.length >= 8 && password == confirmPassword && termsChecked
-
-        updateButtonState(binding.signupButton, isEnabled)
+        val isFormValid = binding.signupNameInput.text.toString().isNotBlank() &&
+                android.util.Patterns.EMAIL_ADDRESS.matcher(binding.signupEmailInput.text.toString().trim()).matches() &&
+                binding.signupPhoneInput.text.toString().isNotBlank() &&
+                password.length >= 8 &&
+                password == confirmPassword &&
+                binding.termsCheckbox.isChecked
+        updateButtonState(binding.signupButton, isFormValid)
     }
 
-    /**
-     * 버튼의 활성화 상태와 투명도를 업데이트
-     * @param button 상태를 변경할 버튼
-     * @param isEnabled 활성화 여부
-     */
-    private fun updateButtonState(button: View, isEnabled: Boolean) {
+    private fun updateButtonState(button: MaterialButton, isEnabled: Boolean) {
         button.isEnabled = isEnabled
         button.alpha = if (isEnabled) 1.0f else 0.5f
     }
 
-    /**
-     * 각종 클릭 이벤트 리스너 설정
-     */
     private fun setupClickListeners() {
         binding.loginButton.setOnClickListener {
-            // TODO: 실제 로그인 API 호출 로직 구현
-            Toast.makeText(this, "로그인을 시도합니다.", Toast.LENGTH_SHORT).show()
+            viewModel.performLogin(
+                binding.loginEmailInput.text.toString(),
+                binding.loginPasswordInput.text.toString()
+            )
         }
-
         binding.signupButton.setOnClickListener {
-            // TODO: 실제 회원가입 API 호출 로직 구현
-            Toast.makeText(this, "회원가입을 진행합니다.", Toast.LENGTH_SHORT).show()
+            viewModel.performSignup(
+                binding.signupNameInput.text.toString(),
+                binding.signupEmailInput.text.toString(),
+                binding.signupPhoneInput.text.toString(),
+                binding.signupPasswordInput.text.toString()
+            )
         }
-
         binding.forgotPasswordText.setOnClickListener {
             Toast.makeText(this, "비밀번호 찾기 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
         }
-
-        binding.kakaoButton.setOnClickListener { socialLogin("카카오") }
-        binding.naverButton.setOnClickListener { socialLogin("네이버") }
-        binding.googleButton.setOnClickListener { socialLogin("구글") }
+        binding.kakaoButton.setOnClickListener { performSocialLogin("카카오") }
+        binding.naverButton.setOnClickListener { performSocialLogin("네이버") }
+        binding.googleButton.setOnClickListener { performSocialLogin("구글") }
     }
 
-    /**
-     * 소셜 로그인 버튼에 아이콘 설정 (아이콘 파일이 drawable 폴더에 있어야 함)
-     */
-    private fun setupSocialLoginButtons() {
-        // 아래 R.drawable.ic_... 부분에 실제 이미지 파일 이름을 넣으세요.
-        // binding.kakaoButton.setImageResource(R.drawable.ic_kakao_login)
-        // binding.naverButton.setImageResource(R.drawable.ic_naver_login)
-        // binding.googleButton.setImageResource(R.drawable.ic_google_login)
+    private fun observeViewModel() {
+        viewModel.loginState.observe(this) { state ->
+            when (state) {
+                is UiState.Loading -> {
+                    binding.loginButton.text = "로그인 중..."
+                    updateButtonState(binding.loginButton, false)
+                }
+                is UiState.Success -> {
+                    Toast.makeText(this, state.data, Toast.LENGTH_SHORT).show()
+                    binding.loginButton.text = "로그인"
+                    validateLoginForm()
+                }
+                is UiState.Error -> {
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    binding.loginButton.text = "로그인"
+                    validateLoginForm()
+                }
+                else -> { /* Idle 상태 */ }
+            }
+        }
+        viewModel.signupState.observe(this) { state ->
+            when (state) {
+                is UiState.Loading -> {
+                    binding.signupButton.text = "가입 중..."
+                    updateButtonState(binding.signupButton, false)
+                }
+                is UiState.Success -> {
+                    Toast.makeText(this, state.data, Toast.LENGTH_SHORT).show()
+                    binding.signupButton.text = "회원가입"
+                    binding.tabLayout.getTabAt(0)?.select()
+                }
+                is UiState.Error -> {
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    binding.signupButton.text = "회원가입"
+                    validateSignupForm()
+                }
+                else -> { /* Idle 상태 */ }
+            }
+        }
     }
 
-    /**
-     * 소셜 로그인 처리 (임시)
-     */
-    private fun socialLogin(provider: String) {
-        Toast.makeText(this, "$provider 계정으로 로그인을 시도합니다.", Toast.LENGTH_SHORT).show()
+    private fun performSocialLogin(provider: String) {
+        Toast.makeText(this, "$provider 로그인을 시도합니다.", Toast.LENGTH_SHORT).show()
     }
 }

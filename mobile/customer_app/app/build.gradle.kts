@@ -26,10 +26,16 @@ android {
             )
         }
     }
+
+    buildFeatures {
+        viewBinding = true // 뷰 바인딩 활성화
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
@@ -46,5 +52,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("com.github.fornewid:neumorphism:0.3.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.1")
+    // LiveData
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.1")
+    // Activity KTX (by viewModels() 사용)
+    implementation("androidx.activity:activity-ktx:1.9.0")
 }
