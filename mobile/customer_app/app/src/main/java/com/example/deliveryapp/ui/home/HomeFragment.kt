@@ -1,22 +1,26 @@
-package com.example.deliveryapp
+package com.example.deliveryapp.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.deliveryapp.databinding.FragmentHomeBinding
+import com.example.deliveryapp.ui.adapters.BannerAdapter
+import com.example.deliveryapp.ui.adapters.CategoryAdapter
+import com.example.deliveryapp.ui.adapters.RestaurantAdapter
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -24,27 +28,27 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupCategoryRecyclerView()
-        // TODO: Banner ViewPager2 어댑터 설정
+        setupBannerViewPager()
+        setupRecyclerViews()
+        observeViewModel()
     }
 
-    private fun setupCategoryRecyclerView() {
-        // 임시 데이터
-        val categories = listOf(
-            Category(R.drawable.home, "Korean"), // 아이콘은 임시
-            Category(R.drawable.home, "Chinese"),
-            Category(R.drawable.home, "Japanese"),
-            Category(R.drawable.home, "Western"),
-            Category(R.drawable.home, "Pizza"),
-            Category(R.drawable.home, "Chicken"),
-            Category(R.drawable.home, "Dessert"),
-            Category(R.drawable.home, "Snacks")
-        )
+    private fun setupBannerViewPager() {
+        val dummyBanners = listOf("url1", "url2", "url3") // 실제로는 ViewModel에서
+        binding.bannerViewPager.adapter = BannerAdapter(dummyBanners)
+    }
 
-        val categoryAdapter = CategoryAdapter(categories)
-        binding.categoryRecyclerView.apply {
-            layoutManager = GridLayoutManager(context, 4) // 한 줄에 4개씩
-            adapter = categoryAdapter
+    private fun setupRecyclerViews() {
+        binding.categoryRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.recommendedRecyclerView.layoutManager = LinearLayoutManager(context)
+    }
+
+    private fun observeViewModel() {
+        viewModel.categories.observe(viewLifecycleOwner) { categories ->
+            binding.categoryRecyclerView.adapter = CategoryAdapter(categories)
+        }
+        viewModel.restaurants.observe(viewLifecycleOwner) { restaurants ->
+            binding.recommendedRecyclerView.adapter = RestaurantAdapter(restaurants)
         }
     }
 
@@ -53,9 +57,3 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
-
-// 임시 데이터 클래스 (별도 파일로 분리하는 것을 추천)
-data class Category(val iconResId: Int, val name: String)
-
-// 카테고리 어댑터 (별도 파일로 분리하는 것을 추천)
-// ... CategoryAdapter 클래스 구현 ...

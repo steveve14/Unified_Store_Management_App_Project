@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 다른 스타일이 이미 있을 수 있습니다. 그 아래에 추가하세요. -->
+
+    <style name="ProfileMenuItem" parent="Widget.AppCompat.TextView">
+        <!-- 레이아웃 속성 -->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingHorizontal">24dp</item>
+        <item name="android:paddingVertical">18dp</item> <!-- 패딩을 조금 더 넉넉하게 조정 -->
+
+        <!-- 텍스트 속성 -->
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/primary_text</item>
+
+        <!-- 아이콘 및 인터랙션 -->
+        <item name="android:drawableEnd">@drawable/chevron_right</item> <!-- 오른쪽 화살표 아이콘 -->
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item> <!-- 클릭 효과 -->
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+</resources>

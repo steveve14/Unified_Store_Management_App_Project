@@ -49,6 +49,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.maps)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -65,4 +67,13 @@ dependencies {
     // Coroutines for asynchronous tasks
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+
+    // ViewModel & LiveData for Architecture Components
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.fragment:fragment-ktx:1.6.2") // fragment-ktx for viewModels delegate
+
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 }

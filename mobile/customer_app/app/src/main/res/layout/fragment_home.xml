@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".HomeFragment">
+    android:scrollbars="none"
+    tools:context=".ui.home.HomeFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
 
         <!-- 검색창 -->
         <LinearLayout
@@ -25,17 +27,19 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:importantForAccessibility="no"
                 android:src="@drawable/search"
                 app:tint="@color/secondary_text" />
 
-            <EditText
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="52dp"
                 android:layout_weight="1"
                 android:background="@null"
-                android:hint="Search for restaurants or dishes"
+                android:gravity="center_vertical"
                 android:paddingHorizontal="12dp"
-                android:textColorHint="@color/secondary_text"
+                android:text="Search for restaurants or dishes"
+                android:textColor="@color/secondary_text"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -48,24 +52,46 @@
 
         <!-- 음식 카테고리 -->
         <TextView
+            style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:text="Categories"
             android:textColor="@color/primary_text"
-            android:textSize="20sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/category_recycler_view"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3"
+            tools:listitem="@layout/item_category" />
+
+        <!-- 오늘의 추천 맛집 -->
+        <TextView
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Recommended For You"
+            android:textColor="@color/primary_text"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recommended_recycler_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:paddingHorizontal="12dp"
-            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/item_category"
-            tools:spanCount="4" />
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_restaurant" />
 
     </LinearLayout>
 </ScrollView>

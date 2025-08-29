@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.profile.ProfileFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 사용자 정보 섹션 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="24dp">
+
+            <ImageView
+                android:id="@+id/iv_profile_image"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/person"
+                app:tint="@color/primary_text"
+                android:contentDescription="Profile Image"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:id="@+id/tv_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Steve" />
+
+                <TextView
+                    android:id="@+id/tv_user_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="16sp"
+                    tools:text="steve14@example.com" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="@color/background_light_gray" />
+
+        <!-- 메뉴 목록 (RecyclerView 또는 여러 개의 TextView로 구현 가능) -->
+        <TextView
+            android:id="@+id/menu_edit_profile"
+            style="@style/ProfileMenuItem"
+            android:text="Edit Profile" />
+
+        <TextView
+            android:id="@+id/menu_payment_methods"
+            style="@style/ProfileMenuItem"
+            android:text="Payment Methods" />
+
+        <TextView
+            android:id="@+id/menu_addresses"
+            style="@style/ProfileMenuItem"
+            android:text="Manage Addresses" />
+
+        <TextView
+            android:id="@+id/menu_notifications"
+            style="@style/ProfileMenuItem"
+            android:text="Notifications" />
+
+        <TextView
+            android:id="@+id/menu_support"
+            style="@style/ProfileMenuItem"
+            android:text="Help &amp; Support" />
+
+        <TextView
+            android:id="@+id/menu_logout"
+            style="@style/ProfileMenuItem"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/accent_red"
+            android:text="Logout" />
+
+    </LinearLayout>
+</ScrollView>
