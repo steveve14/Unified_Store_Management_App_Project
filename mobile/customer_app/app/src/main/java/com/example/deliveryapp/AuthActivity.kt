@@ -1,4 +1,4 @@
 package com.example.deliveryapp
 
-class LoginActivity {
+class AuthActivity {
 }
