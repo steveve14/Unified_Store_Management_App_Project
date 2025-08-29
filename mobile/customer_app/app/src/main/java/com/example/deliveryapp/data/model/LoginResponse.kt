@@ -1,4 +1,7 @@
 package com.example.deliveryapp.data.model
 
-class LoginResponse {
-}
+data class LoginResponse(
+    val token: String,
+    val userId: String,
+    val name: String
+)

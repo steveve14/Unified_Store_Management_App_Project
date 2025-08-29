@@ -1,4 +1,6 @@
 package com.example.deliveryapp.data.model
 
-class LoginRequest {
-}
+data class LoginRequest(
+    val email: String,
+    val password: String
+)

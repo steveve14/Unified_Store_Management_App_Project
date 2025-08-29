@@ -14,4 +14,11 @@
     <color name="naver_green">#03C75A</color>
     <color name="google_red">#EA4335</color>
 
+    <color name="primary_text">#181111</color>
+    <color name="secondary_text">#886364</color>
+    <color name="background_light_gray">#F4F0F0</color>
+    <color name="accent_red">#EA2A33</color>
+    <color name="border_color">#E5DCDC</color>
+    <color name="transparent">#00000000</color>
+
 </resources>
